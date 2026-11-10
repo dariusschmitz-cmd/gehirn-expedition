@@ -1,0 +1,1925 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Die epische Gehirn-Expedition</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0f19;
+            color: #f1f5f9;
+            user-select: none;
+            touch-action: manipulation;
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            border-color: rgba(99, 102, 241, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px -6px rgba(99, 102, 241, 0.3);
+        }
+        .btn-glow {
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.35);
+        }
+        .btn-glow:hover {
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.55);
+            transform: translateY(-1px);
+        }
+        /* Theme Overrides */
+        body.theme-emerald {
+            background-color: #022c22;
+            color: #ecfdf5;
+        }
+        body.theme-emerald .glass-panel,
+        body.theme-emerald .glass-card {
+            background: rgba(6, 78, 59, 0.6);
+            border-color: rgba(52, 211, 153, 0.2);
+        }
+        body.theme-solar {
+            background-color: #1c1917;
+            color: #fef3c7;
+        }
+        body.theme-solar .glass-panel,
+        body.theme-solar .glass-card {
+            background: rgba(68, 29, 14, 0.6);
+            border-color: rgba(251, 191, 36, 0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- MAIN CONTAINER -->
+    <div id="app-wrapper" class="max-w-6xl mx-auto px-4 py-6 w-full flex-grow flex flex-col justify-between">
+        
+        <!-- HEADER / NAVIGATION -->
+        <header class="glass-panel rounded-2xl p-4 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="app.playSound('click'); app.showDashboard()">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center text-2xl shadow-md ring-2 ring-white/10">
+                    🧠
+                </div>
+                <div>
+                    <h1 class="text-xl font-black bg-gradient-to-r from-white via-indigo-200 to-indigo-400 bg-clip-text text-transparent tracking-tight">
+                        GEHIRN-EXPEDITION
+                    </h1>
+                    <div class="flex items-center space-x-2 text-xs font-semibold text-slate-400">
+                        <span id="rank-badge" class="px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-300 border border-indigo-500/30">Novize</span>
+                        <span>•</span>
+                        <span id="user-xp" class="text-indigo-400 font-bold">0 XP</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two-Row Responsive Action Bar -->
+            <div class="flex flex-col gap-2 w-full md:w-auto items-center md:items-end">
+                <!-- Zeile 1: Aktivitäten & Duelle -->
+                <div class="flex flex-wrap justify-center gap-2 bg-slate-900/60 p-1.5 rounded-xl border border-slate-800">
+                    <button onclick="app.playSound('click'); app.showMindfulnessModal()" title="Achtsamkeit & Atem" class="px-3 py-1.5 rounded-lg bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 text-xs font-bold border border-emerald-500/30 transition">
+                        🧘 Achtsamkeit
+                    </button>
+                    <button onclick="app.playSound('click'); app.showRiddlesModal()" title="Tägliche Knobeleien" class="px-3 py-1.5 rounded-lg bg-amber-600/30 hover:bg-amber-600/50 text-amber-300 text-xs font-bold border border-amber-500/30 transition">
+                        💡 Knobeleien
+                    </button>
+                    <button onclick="app.playSound('click'); app.showRoutinesModal()" title="Tägliche Gehirn-Gewohnheiten" class="px-3 py-1.5 rounded-lg bg-teal-600/30 hover:bg-teal-600/50 text-teal-300 text-xs font-bold border border-teal-500/30 transition">
+                        🌱 Routinen
+                    </button>
+                    <button onclick="app.playSound('click'); app.showDuelModal()" title="Echtzeit Online-Duell" class="px-3 py-1.5 rounded-lg bg-rose-600/30 hover:bg-rose-600/50 text-rose-300 text-xs font-bold border border-rose-500/30 transition flex items-center gap-1">
+                        ⚔️ Duell
+                    </button>
+                </div>
+
+                <!-- Zeile 2: Tools & Profil -->
+                <div class="flex flex-wrap justify-center gap-2 bg-slate-900/40 p-1 rounded-xl border border-slate-800/60">
+                    <button onclick="app.playSound('click'); app.toggleTheme()" title="Theme wechseln" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-semibold transition">
+                        🎨 Style
+                    </button>
+                    <button onclick="app.playSound('click'); app.showLeaderboard()" title="Rangliste" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-400 text-[11px] font-semibold transition">
+                        🏆 Scores
+                    </button>
+                    <button onclick="app.playSound('click'); app.showStatsModal()" title="Profil & Radar" class="px-2.5 py-1 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 text-[11px] font-bold border border-indigo-500/30 transition">
+                        📊 Profil
+                    </button>
+                    <button onclick="app.toggleSound()" id="sound-btn" class="w-7 h-7 rounded-lg bg-slate-800 flex items-center justify-center text-xs hover:bg-slate-700 transition">
+                        🔊
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN VIEW PORT -->
+        <main id="main-content" class="flex-grow">
+            <!-- DASHBOARD VIEW -->
+            <div id="view-dashboard" class="space-y-6">
+                
+                <!-- Hero Action Banner -->
+                <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-900/70 via-purple-900/50 to-slate-900/80 p-6 border border-indigo-500/30 shadow-xl">
+                    <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-5">
+                        <div class="space-y-2 text-center md:text-left">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-[11px] font-bold uppercase tracking-wider">
+                                🚀 Tägliches Kognitions-Workout
+                            </span>
+                            <h2 class="text-2xl font-black text-white">Schärfe deine Neuronen</h2>
+                            <p class="text-slate-300 text-xs max-w-lg leading-relaxed">
+                                Trainiere Aufmerksamkeit, Logik & Arbeitsgedächtnis mit 30 Spezialstationen. Wähle eine Aufgabe oder absolviere den Marathon!
+                            </p>
+                        </div>
+                        <div class="flex flex-wrap sm:flex-nowrap gap-3 w-full md:w-auto">
+                            <button onclick="app.startMarathon()" class="flex-1 md:flex-none btn-glow px-5 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 text-white font-black text-xs uppercase tracking-wide flex items-center justify-center gap-2">
+                                ⚡ 3-Min Marathon
+                            </button>
+                            <button onclick="app.startSpeedSprint()" class="flex-1 md:flex-none px-5 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-400 hover:to-rose-400 text-white font-black text-xs uppercase tracking-wide flex items-center justify-center gap-2 shadow-lg transition">
+                                ⏱️ 60s Speed-Sprint
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Widgets Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    
+                    <!-- Streak Widget -->
+                    <div class="glass-card rounded-xl p-4 flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-black uppercase text-indigo-400 tracking-wider">🔥 Training-Streak</span>
+                            <span id="streak-count-badge" class="text-[11px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">0 Tage</span>
+                        </div>
+                        <p class="text-[11px] text-slate-400 mb-3">Tägliches Training sichert dir deinen Streak-Bonus.</p>
+                        <div id="streak-week-grid" class="grid grid-cols-7 gap-1 text-center">
+                            <!-- Filled dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Fun Fact Widget -->
+                    <div class="glass-card rounded-xl p-4 flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-black uppercase text-emerald-400 tracking-wider">🧠 Gehirn-Fakt</span>
+                            <button onclick="app.nextBrainFact()" class="text-[10px] font-bold text-slate-400 hover:text-emerald-300 transition">Nächster 🔄</button>
+                        </div>
+                        <p id="dash-fact-text" class="text-xs text-slate-300 italic my-auto leading-relaxed">
+                            „Schon 5 Minuten tägliches Gehirntraining schärfen deine neuronale Vernetzung spürbar – Konsistency schlägt Intensität!“
+                        </p>
+                    </div>
+
+                    <!-- Community Poll Widget -->
+                    <div class="glass-card rounded-xl p-4 flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-black uppercase text-amber-400 tracking-wider">📊 Community-Umfrage</span>
+                            <button onclick="app.nextCommunityPoll()" class="text-[10px] font-bold text-slate-400 hover:text-amber-300 transition">Nächste 🔄</button>
+                        </div>
+                        <div id="dash-poll-container">
+                            <!-- Rendered dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mindfulness Quick Access Banner -->
+                <div class="glass-card rounded-2xl p-4 border border-emerald-500/30 flex items-center justify-between bg-gradient-to-r from-emerald-950/40 to-teal-950/20">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-3xl">🌿</span>
+                        <div>
+                            <h4 class="text-xs font-black text-emerald-300 uppercase tracking-wider">Achtsamkeit & Fokus-Pause</h4>
+                            <p class="text-[11px] text-slate-300">Regeneriere deine kognitive Leistungsfähigkeit mit der 4-7-8 Atemmethode (+15 XP).</p>
+                        </div>
+                    </div>
+                    <button onclick="app.startBreathingExercise()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow-lg shrink-0">
+                        🧘 Atem-Session
+                    </button>
+                </div>
+
+                <!-- Stations Grid Header -->
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-black text-white tracking-tight flex items-center gap-2">
+                            <span>🗺️</span> Alle 30 Trainings-Stationen
+                        </h3>
+                        <span class="text-xs text-slate-400">Wähle eine Station aus</span>
+                    </div>
+
+                    <!-- 30 Stations Grid -->
+                    <div id="stations-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                        <!-- Stations rendered dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- GAME PLAY VIEW -->
+            <div id="view-game" class="hidden space-y-5">
+                <div class="glass-panel rounded-2xl p-5 border border-indigo-500/20">
+                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+                        <button onclick="app.showDashboard()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition">
+                            ⬅️ Beenden
+                        </button>
+                        <div class="text-center">
+                            <h2 id="game-title" class="text-lg font-black text-white">Station Title</h2>
+                            <p id="game-category" class="text-[11px] text-indigo-400 font-bold">Kategorie</p>
+                        </div>
+                        <div class="text-right">
+                            <span id="game-score-display" class="text-lg font-black text-amber-400">0 Pkt</span>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Game Stage -->
+                    <div id="game-stage" class="min-h-[280px] flex flex-col items-center justify-center p-4 bg-slate-950/60 rounded-xl border border-slate-800/80 relative">
+                        <!-- Dynamic Game Content -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="mt-8 pt-4 border-t border-slate-800/80 text-center text-xs text-slate-500">
+            <p>Dein Gehirn. Dein Training. Jeden Tag ein Stück schärfer.</p>
+        </footer>
+    </div>
+
+    <!-- MODAL: ACHTSAMKEIT & ATEM-TRAINER -->
+    <div id="modal-mindfulness" class="fixed inset-0 bg-black/85 backdrop-blur-md hidden items-center justify-center z-50 p-4">
+        <div class="glass-panel rounded-2xl max-w-lg w-full p-4 sm:p-5 space-y-3 border border-emerald-500/30 text-center max-h-[92vh] flex flex-col justify-between overflow-y-auto">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800 shrink-0">
+                <h3 class="text-lg font-black text-emerald-400 flex items-center gap-2">
+                    <span>🧘</span> Achtsamkeit & Neuro-Erholung
+                </h3>
+                <button onclick="app.closeModals()" class="text-slate-400 hover:text-white font-bold text-sm px-2">✕</button>
+            </div>
+
+            <!-- Tab Selection for Mindfulness Modes -->
+            <div class="grid grid-cols-5 gap-1 bg-slate-900/80 p-1 rounded-xl border border-slate-800 text-[10px] font-bold shrink-0">
+                <button id="mindtab-breath" onclick="app.setMindfulnessTab('breath')" class="py-1.5 rounded-lg bg-emerald-600 text-white transition">
+                    🫁 Atem
+                </button>
+                <button id="mindtab-eye" onclick="app.setMindfulnessTab('eye')" class="py-1.5 rounded-lg text-slate-400 hover:text-white transition">
+                    👁️ Augen
+                </button>
+                <button id="mindtab-scan" onclick="app.setMindfulnessTab('scan')" class="py-1.5 rounded-lg text-slate-400 hover:text-white transition">
+                    🧘 Body Scan
+                </button>
+                <button id="mindtab-sound" onclick="app.setMindfulnessTab('sound')" class="py-1.5 rounded-lg text-slate-400 hover:text-white transition">
+                    🌊 Sounds
+                </button>
+                <button id="mindtab-story" onclick="app.setMindfulnessTab('story')" class="py-1.5 rounded-lg text-slate-400 hover:text-white transition">
+                    📜 Stories
+                </button>
+            </div>
+
+            <!-- TAB 1: BREATH -->
+            <div id="mindpane-breath" class="space-y-3 py-1">
+                <p class="text-xs text-slate-300">
+                    Sauerstoffversorgung für dein Gehirn: Die 4-7-8 Technik beruhigt das Nervensystem in unter einer Minute.
+                </p>
+                <div class="relative w-36 h-36 mx-auto flex items-center justify-center my-2">
+                    <div id="breath-circle" class="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500 to-teal-400 opacity-60 transition-all duration-1000 flex items-center justify-center shadow-2xl ring-4 ring-emerald-400/30">
+                    </div>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                        <span id="breath-instruction" class="text-sm font-black text-white">Bereit?</span>
+                        <span id="breath-timer" class="text-[10px] text-emerald-200 font-bold mt-0.5">4-7-8 Methode</span>
+                    </div>
+                </div>
+                <div class="flex gap-2 justify-center pt-1">
+                    <button id="breath-start-btn" onclick="app.toggleBreathingCycle()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition shadow-lg">
+                        ▶️ Atem-Training starten
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 2: EYE RELIEF (20-20-20 Rule) -->
+            <div id="mindpane-eye" class="hidden space-y-3 py-1">
+                <p class="text-xs text-slate-300">
+                    Entlaste deine Augenmuskeln! Verfolge den schwebenden Lichtpunkt sanft mit deinen Augen.
+                </p>
+                <div class="relative h-36 w-full bg-slate-950/80 rounded-xl border border-slate-800 flex items-center justify-center overflow-hidden">
+                    <div id="eye-target" class="w-8 h-8 rounded-full bg-cyan-400 shadow-[0_0_20px_#22d3ee] transition-all duration-700 flex items-center justify-center text-[10px]">
+                        👁️
+                    </div>
+                </div>
+                <button onclick="app.startEyeExercise()" class="px-5 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs transition shadow-lg">
+                    ▶️ 20s Augen-Fokus starten (+15 XP)
+                </button>
+            </div>
+
+            <!-- TAB 3: BODY SCAN TRACKER -->
+            <div id="mindpane-scan" class="hidden space-y-3 py-1">
+                <p class="text-xs text-slate-300">
+                    Löse gezielt körperliche Spannungen vor oder nach dem Denk-Workout.
+                </p>
+                <div id="bodyscan-display" class="h-36 w-full bg-slate-950/80 rounded-xl border border-slate-800 p-3 flex flex-col items-center justify-center text-center space-y-1">
+                    <span id="bodyscan-emoji" class="text-2xl">💆‍♂️</span>
+                    <h4 id="bodyscan-phase" class="text-xs font-bold text-emerald-300">Bereit für den 60-Sekunden-Body-Scan?</h4>
+                    <p id="bodyscan-hint" class="text-[11px] text-slate-400 max-w-xs">Tippe unten auf Start, um mit der Entspannung der Stirn- und Kiefermuskeln zu beginnen.</p>
+                </div>
+                <button id="bodyscan-btn" onclick="app.startBodyScan()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition shadow-lg">
+                    ▶️ Body Scan starten (+20 XP)
+                </button>
+            </div>
+
+            <!-- TAB 4: AMBIENT SOUND GENERATOR -->
+            <div id="mindpane-sound" class="hidden space-y-3 py-1">
+                <p class="text-xs text-slate-300">
+                    Natur- und Frequenz-Generatoren zur Unterstützung von Fokus & Regeneration.
+                </p>
+                <div class="h-32 w-full bg-slate-950/80 rounded-xl border border-slate-800 flex flex-col items-center justify-center space-y-2 p-3">
+                    <span class="text-2xl animate-pulse">🧘‍♂️</span>
+                    <span id="zen-status-text" class="text-xs font-bold text-amber-300">Wähle deinen Wohlfühl-Sound</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="app.playZenChime()" class="py-2 px-3 rounded-xl bg-amber-600/30 hover:bg-amber-600/50 text-amber-300 border border-amber-500/30 font-bold text-xs transition">
+                        🔔 Klangschale
+                    </button>
+                    <button id="ambient-rain-btn" onclick="app.toggleAmbientRain()" class="py-2 px-3 rounded-xl bg-cyan-600/30 hover:bg-cyan-600/50 text-cyan-300 border border-cyan-500/30 font-bold text-xs transition">
+                        🌧️ Sanfter Regen
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 5: ZEN STORIES & GRATITUDE -->
+            <div id="mindpane-story" class="hidden space-y-3 text-left flex-1 flex flex-col overflow-hidden">
+                <!-- STORY SELECTION LIST VIEW -->
+                <div id="zen-story-list-view" class="space-y-3 flex flex-col flex-1 overflow-hidden">
+                    <!-- Dankbarkeits-Impuls Notizfeld -->
+                    <div class="bg-slate-900/90 p-3 rounded-xl border border-emerald-500/30 space-y-2 shrink-0">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-black text-emerald-300 uppercase tracking-wider">🌱 Dankbarkeits-Moment</span>
+                            <span class="text-[9px] text-slate-400">+20 XP Notiz</span>
+                        </div>
+                        <input type="text" id="gratitude-input" placeholder="Wofür bist du heute dankbar?" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500">
+                        <button onclick="app.saveGratitudeNote()" class="w-full py-1 rounded-lg bg-emerald-600/40 hover:bg-emerald-600/60 text-emerald-300 text-[10px] font-bold border border-emerald-500/30 transition">
+                            Speichern & XP abholen
+                        </button>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1 shrink-0">
+                        <span class="text-xs font-black text-amber-300 uppercase tracking-wider">📜 Wähle eine Zen-Geschichte</span>
+                        <span class="text-[10px] text-slate-400">Klicke zum Lesen</span>
+                    </div>
+                    <div id="zen-story-titles-container" class="space-y-2 flex-1 overflow-y-auto pr-1 min-h-[160px] max-h-[40vh] overscroll-contain">
+                        <!-- Titles rendered dynamically -->
+                    </div>
+                </div>
+
+                <!-- SINGLE STORY DETAIL READER VIEW -->
+                <div id="zen-story-detail-view" class="hidden space-y-3 flex flex-col flex-1 overflow-hidden">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2 shrink-0">
+                        <span id="zen-story-title" class="text-xs font-black text-amber-300 uppercase tracking-wider">Titel der Geschichte</span>
+                        <button onclick="app.showZenStoryList()" class="text-[10px] font-bold text-slate-400 hover:text-amber-300 transition flex items-center gap-1">
+                            ⬅️ Übersicht
+                        </button>
+                    </div>
+                    <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 flex-1 overflow-y-auto overscroll-contain min-h-[160px] max-h-[40vh]">
+                        <p id="zen-story-body" class="text-xs text-slate-300 italic leading-relaxed whitespace-pre-line">
+                            Lade Geschichte...
+                        </p>
+                    </div>
+                    <button onclick="app.readZenStoryReward()" class="w-full py-2.5 rounded-xl bg-amber-600/30 hover:bg-amber-600/50 text-amber-300 font-bold text-xs border border-amber-500/30 transition shrink-0">
+                        📖 Gelesen & Reflektiert (+15 XP)
+                    </button>
+                </div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-800 shrink-0">
+                <button onclick="app.closeModals()" class="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition">
+                    Zurück zum Workout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: KNOBELEIEN & RÄTSEL -->
+    <div id="modal-riddles" class="fixed inset-0 bg-black/85 backdrop-blur-md hidden items-center justify-center z-50 p-4">
+        <div class="glass-panel rounded-2xl max-w-lg w-full p-5 space-y-4 border border-amber-500/30 text-center max-h-[92vh] flex flex-col justify-between overflow-y-auto">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800 shrink-0">
+                <h3 class="text-lg font-black text-amber-400 flex items-center gap-2">
+                    <span>💡</span> Tägliche Knobelaufgaben
+                </h3>
+                <button onclick="app.closeModals()" class="text-slate-400 hover:text-white font-bold text-sm px-2">✕</button>
+            </div>
+
+            <div class="space-y-3 text-left flex-1 flex flex-col overflow-y-auto">
+                <div class="bg-slate-900/90 p-4 rounded-xl border border-amber-500/30 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span id="riddle-badge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">Logik & Denksport</span>
+                        <span id="riddle-day-label" class="text-[10px] text-slate-400">Aufgabe des Tages</span>
+                    </div>
+                    <h4 id="riddle-title" class="text-sm font-black text-white">Das Alter-Rätsel</h4>
+                    <p id="riddle-question" class="text-xs text-slate-300 leading-relaxed">
+                        Ein Vater ist heute viermal so alt wie sein Sohn. In 20 Jahren wird er doppelt so alt sein wie sein Sohn. Wie alt sind die beiden heute?
+                    </p>
+
+                    <!-- Answer Toggle Section -->
+                    <div class="pt-2">
+                        <button id="riddle-toggle-btn" onclick="app.toggleRiddleSolution()" class="w-full py-2 rounded-lg bg-amber-600/30 hover:bg-amber-600/50 text-amber-300 font-bold text-xs border border-amber-500/30 transition">
+                            💡 Lösung anzeigen
+                        </button>
+                        <div id="riddle-solution-box" class="hidden mt-3 p-3 rounded-lg bg-slate-950 border border-slate-800 text-xs text-slate-300 space-y-1">
+                            <span class="font-bold text-emerald-400">Lösungsweg:</span>
+                            <p id="riddle-solution-text" class="italic leading-relaxed">
+                                Der Sohn ist heute 10 Jahre alt und der Vater 40 Jahre alt. (In 20 Jahren ist der Sohn 30 und der Vater 60).
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Archive selection -->
+                <div class="space-y-2">
+                    <span class="text-xs font-black text-slate-300 uppercase tracking-wider">📚 Weiteres Rätsel-Archiv</span>
+                    <div id="riddle-archive-list" class="space-y-1.5 max-h-40 overflow-y-auto pr-1">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-800 shrink-0">
+                <button onclick="app.closeModals()" class="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition">
+                    Schließen
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: PROFIL & RADAR CHART -->
+    <div id="modal-profile" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center z-50 p-4">
+        <div class="glass-panel rounded-2xl max-w-md w-full p-6 space-y-5 border border-indigo-500/30">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <h3 class="text-lg font-black text-white flex items-center gap-2">
+                    <span>📊</span> Kognitives Profil & Radar
+                </h3>
+                <button onclick="app.closeModals()" class="text-slate-400 hover:text-white font-bold text-sm px-2">✕</button>
+            </div>
+            
+            <!-- Canvas Radar -->
+            <div class="flex justify-center items-center py-2">
+                <canvas id="radarChartCanvas" width="220" height="220"></canvas>
+            </div>
+
+            <!-- Skill Values Grid -->
+            <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center">
+                    <span class="text-slate-400">🧠 Gedächtnis</span>
+                    <span id="skill-val-mem" class="font-bold text-indigo-400">20%</span>
+                </div>
+                <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center">
+                    <span class="text-slate-400">⚡ Fokus/Speed</span>
+                    <span id="skill-val-speed" class="font-bold text-indigo-400">20%</span>
+                </div>
+                <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center">
+                    <span class="text-slate-400">🧩 Logik</span>
+                    <span id="skill-val-logic" class="font-bold text-indigo-400">20%</span>
+                </div>
+                <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center">
+                    <span class="text-slate-400">💬 Sprache</span>
+                    <span id="skill-val-lang" class="font-bold text-indigo-400">20%</span>
+                </div>
+            </div>
+
+            <button onclick="app.closeModals()" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition">
+                Schließen
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL: ROUTINEN & NEURO-HABITS -->
+    <div id="modal-routines" class="fixed inset-0 bg-black/85 backdrop-blur-md hidden items-center justify-center z-50 p-4">
+        <div class="glass-panel rounded-2xl max-w-lg w-full p-5 space-y-4 border border-teal-500/30 text-center max-h-[92vh] flex flex-col justify-between overflow-y-auto">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800 shrink-0">
+                <h3 class="text-lg font-black text-teal-400 flex items-center gap-2">
+                    <span>🌱</span> Tägliche Gehirn-Routinen
+                </h3>
+    <!-- MODAL: MULTIPLAYER / ONLINE DUELL -->
+    <div id="modal-duel" class="fixed inset-0 bg-black/85 backdrop-blur-md hidden items-center justify-center z-50 p-4">
+        <div class="glass-panel rounded-2xl max-w-lg w-full p-5 space-y-4 border border-rose-500/30 text-center max-h-[92vh] flex flex-col justify-between overflow-y-auto">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800 shrink-0">
+                <h3 class="text-lg font-black text-rose-400 flex items-center gap-2">
+                    <span>⚔️</span> Online-Kognitionsduell
+                </h3>
+                <button onclick="app.closeModals()" class="text-slate-400 hover:text-white font-bold text-sm px-2">✕</button>
+            </div>
+
+            <!-- MENU VIEW -->
+            <div id="duel-menu-view" class="space-y-4 text-left flex-1 overflow-y-auto">
+                <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
+                    <span class="text-slate-400">Deine Online-ID:</span>
+                    <span id="duel-user-id-badge" class="font-mono text-indigo-300 font-bold bg-indigo-500/10 px-2 py-1 rounded border border-indigo-500/30">Lade...</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <button onclick="app.setDuelOpponentMode('online')" id="duel-mode-online-btn" class="py-2 rounded-xl bg-rose-600 text-white font-bold border border-rose-500 transition">
+                        🌐 Live Online Spieler
+                    </button>
+                    <button onclick="app.setDuelOpponentMode('bot')" id="duel-mode-bot-btn" class="py-2 rounded-xl bg-slate-800 text-slate-400 font-bold border border-slate-700 transition">
+                        🤖 Neuro-Bot (KI)
+                    </button>
+                </div>
+
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Wähle dein Spiel! Wer die 5 Aufgaben als Erster löst, gewinnt den Match-XP-Bonus.
+                </p>
+
+                <!-- Game Modes -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div onclick="app.startMathDuel()" class="glass-card rounded-xl p-4 cursor-pointer hover:border-rose-500/50 transition flex flex-col justify-between border border-slate-800">
+                        <span class="text-3xl mb-2">⚡</span>
+                        <div>
+                            <h4 class="text-xs font-black text-white">Mathe-Wettrennen</h4>
+                            <p class="text-[10px] text-slate-400 mt-1">Löse 5 Kopfrechen-Aufgaben in Echtzeit!</p>
+                        </div>
+                    </div>
+                    <div onclick="app.startNumbersDuel()" class="glass-card rounded-xl p-4 cursor-pointer hover:border-rose-500/50 transition flex flex-col justify-between border border-slate-800">
+                        <span class="text-3xl mb-2">🔢</span>
+                        <div>
+                            <h4 class="text-xs font-black text-white">Zahlen-Blitz</h4>
+                            <p class="text-[10px] text-slate-400 mt-1">Sortiere 5 Zahlen aufsteigend im Blitz-Tempo!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACTIVE DUEL ARENA VIEW -->
+            <div id="duel-arena-view" class="hidden space-y-4 text-left flex-1 flex flex-col justify-between">
+                <!-- Progress Bars -->
+                <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800 space-y-2">
+                    <!-- User Progress -->
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-[11px] font-bold">
+                            <span class="text-indigo-400">Du (Spieler)</span>
+                            <span id="duel-user-score-text" class="text-white">0 / 5</span>
+                        </div>
+                        <div class="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
+                            <div id="duel-user-bar" class="bg-indigo-500 h-2 transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <!-- Opponent Progress -->
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-[11px] font-bold">
+                            <span id="duel-opp-label" class="text-rose-400">🌐 Online-Gegner</span>
+                            <span id="duel-bot-score-text" class="text-white">0 / 5</span>
+                        </div>
+                        <div class="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
+                            <div id="duel-bot-bar" class="bg-rose-500 h-2 transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Arena Stage -->
+                <div id="duel-stage" class="min-h-[180px] bg-slate-950/80 rounded-xl border border-slate-800 p-4 flex flex-col items-center justify-center text-center space-y-3">
+                    <!-- Dynamic Duel Challenge -->
+                </div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-800 shrink-0">
+                <button onclick="app.closeModals()" class="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition">
+                    Schließen
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FIREBASE REALTIME CLOUD INTEGRATION -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        let db = null;
+        let auth = null;
+        let currentUser = null;
+
+        try {
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'brain-expedition-default';
+            const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+            
+            if (firebaseConfig) {
+                const fbApp = initializeApp(firebaseConfig);
+                db = getFirestore(fbApp);
+                auth = getAuth(fbApp);
+
+                const initAuth = async () => {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                };
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        currentUser = user;
+                        window.onlineDuelManager.setUserId(user.uid);
+                    }
+                });
+
+                initAuth();
+            }
+        } catch(e) {
+            console.log("Offline Fallback aktiv");
+        }
+
+        window.onlineDuelManager = {
+            userId: null,
+            roomUnsub: null,
+            targetAppId: typeof __app_id !== 'undefined' ? __app_id : 'brain-expedition-default',
+            opponentMode: 'online',
+
+            setUserId(uid) {
+                this.userId = uid;
+                const badge = document.getElementById('duel-user-id-badge');
+                if (badge) badge.innerText = uid.substring(0, 8) + '...';
+            },
+
+            async syncDuelProgress(score) {
+                if (!db || !this.userId || this.opponentMode !== 'online') return;
+                try {
+                    const roomRef = doc(db, 'artifacts', this.targetAppId, 'public', 'data', 'online_duels', 'global_room');
+                    await setDoc(roomRef, {
+                        [this.userId]: {
+                            score: score,
+                            updatedAt: Date.now()
+                        }
+                    }, { merge: true });
+                } catch(e){}
+            },
+
+            listenToRoom(onScoreUpdate) {
+                if (!db || this.opponentMode !== 'online') return;
+                try {
+                    const roomRef = doc(db, 'artifacts', this.targetAppId, 'public', 'data', 'online_duels', 'global_room');
+                    this.roomUnsub = onSnapshot(roomRef, (snapshot) => {
+                        if (snapshot.exists()) {
+                            const data = snapshot.data();
+                            Object.keys(data).forEach(uid => {
+                                if (uid !== this.userId && data[uid]) {
+                                    onScoreUpdate(data[uid].score || 0);
+                                }
+                            });
+                        }
+                    }, () => {});
+                } catch(e){}
+            },
+
+            stopListen() {
+                if (this.roomUnsub) {
+                    this.roomUnsub();
+                    this.roomUnsub = null;
+                }
+            }
+        };
+    </script>
+
+    <!-- JAVASCRIPT LOGIC ENGINE -->
+    <script>
+        // -------------------------------------------------------------
+        // AUDIO ENGINE (Synthesized Sound FX & Ambient Noise)
+        // -------------------------------------------------------------
+        const sound = {
+            enabled: true,
+            ctx: null,
+            rainNode: null,
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            },
+            playTone(freq, type = 'sine', duration = 0.1, gainVal = 0.1, attack = 0.01) {
+                if (!this.enabled) return;
+                try {
+                    this.init();
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    const now = this.ctx.currentTime;
+                    
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, now);
+                    
+                    // Smooth Envelope (ADSR)
+                    gain.gain.setValueAtTime(0, now);
+                    gain.gain.linearRampToValueAtTime(gainVal, now + attack);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+                    
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + duration);
+                } catch(e){}
+            },
+            click() { 
+                // Crisp Cyber-Pop
+                this.playTone(1200, 'sine', 0.04, 0.06, 0.002); 
+            },
+            correct() { 
+                // Perlender Arpeggio (C5 - E5 - G5 - C6)
+                const now = sound.ctx ? sound.ctx.currentTime : 0;
+                this.playTone(523.25, 'sine', 0.12, 0.1, 0.005); // C5
+                setTimeout(() => this.playTone(659.25, 'sine', 0.12, 0.1, 0.005), 50); // E5
+                setTimeout(() => this.playTone(783.99, 'sine', 0.15, 0.1, 0.005), 100); // G5
+                setTimeout(() => this.playTone(1046.50, 'triangle', 0.25, 0.12, 0.005), 150); // C6
+            },
+            wrong() { 
+                // Sub-Bass Dissonanz mit Filter-Gleiten
+                if (!this.enabled) return;
+                try {
+                    this.init();
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    const now = this.ctx.currentTime;
+                    
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(180, now);
+                    osc.frequency.exponentialRampToValueAtTime(70, now + 0.25);
+                    
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+                    
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } catch(e){}
+            },
+            fanfare() {
+                // Triumphaler Synthesizer-Akkord
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, idx) => {
+                    setTimeout(() => {
+                        this.playTone(freq, 'triangle', 0.3, 0.08, 0.01);
+                        this.playTone(freq * 1.005, 'sine', 0.3, 0.06, 0.01); // Detune chorus
+                    }, idx * 70);
+                });
+            },
+            tick() { 
+                // Resonantes Holz-Klacken
+                this.playTone(950, 'triangle', 0.025, 0.04, 0.001); 
+            },
+            breathIn() { 
+                // Ätherischer Anschwell-Pad
+                if (!this.enabled) return;
+                try {
+                    this.init();
+                    const osc1 = this.ctx.createOscillator();
+                    const osc2 = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    const now = this.ctx.currentTime;
+                    
+                    osc1.type = 'sine';
+                    osc2.type = 'triangle';
+                    osc1.frequency.setValueAtTime(174, now); // Solfeggio 174Hz
+                    osc2.frequency.setValueAtTime(261.63, now);
+                    
+                    gain.gain.setValueAtTime(0.001, now);
+                    gain.gain.linearRampToValueAtTime(0.08, now + 2.0);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 4.0);
+                    
+                    osc1.connect(gain);
+                    osc2.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    
+                    osc1.start(now);
+                    osc2.start(now);
+                    osc1.stop(now + 4.0);
+                    osc2.stop(now + 4.0);
+                } catch(e){}
+            },
+            breathOut() { 
+                // Beruhigendes Entspannungs-Pad
+                if (!this.enabled) return;
+                try {
+                    this.init();
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    const now = this.ctx.currentTime;
+                    
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(130.81, now); // C3
+                    osc.frequency.exponentialRampToValueAtTime(110, now + 4.0);
+                    
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, now + 4.0);
+                    
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    
+                    osc.start(now);
+                    osc.stop(now + 4.0);
+                } catch(e){}
+            },
+            toggleRain() {
+                if (!this.enabled) return false;
+                this.init();
+                if (this.rainNode) {
+                    this.rainNode.stop();
+                    this.rainNode = null;
+                    return false;
+                }
+                try {
+                    const bufferSize = this.ctx.sampleRate * 2;
+                    const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                    const output = noiseBuffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        output[i] = Math.random() * 2 - 1;
+                    }
+                    const whiteNoise = this.ctx.createBufferSource();
+                    whiteNoise.buffer = noiseBuffer;
+                    whiteNoise.loop = true;
+
+                    const filter = this.ctx.createBiquadFilter();
+                    filter.type = 'lowpass';
+                    filter.frequency.setValueAtTime(800, this.ctx.currentTime);
+
+                    const gain = this.ctx.createGain();
+                    gain.gain.setValueAtTime(0.03, this.ctx.currentTime);
+
+                    whiteNoise.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(this.ctx.destination);
+
+                    whiteNoise.start();
+                    this.rainNode = whiteNoise;
+                    return true;
+                } catch(e) {
+                    return false;
+                }
+            }
+        };
+
+        // -------------------------------------------------------------
+        // DATABASE: 30 STATIONS DATA DEFINITIONS
+        // -------------------------------------------------------------
+        const STATIONS = [
+            { id: 1, title: "Blitz-Rechnen", cat: "Fokus & Tempo", catKey: "speed", icon: "⚡", desc: "Löse schnelle Kopfrechenaufgaben." },
+            { id: 2, title: "Zahlen-Erinnern", cat: "Gedächtnis", catKey: "memory", icon: "🧠", desc: "Merke dir die Zahlenfolge." },
+            { id: 3, title: "Farben-Stroop", cat: "Fokus & Tempo", catKey: "speed", icon: "🎨", desc: "Wähle die Textfarbe, nicht das Wort!" },
+            { id: 4, title: "Muster-Matrix", cat: "Logik", catKey: "logic", icon: "🧩", desc: "Ergänze die logische Reihe." },
+            { id: 5, title: "Wort-Anagramm", cat: "Sprache", catKey: "language", icon: "💬", desc: "Finde das gesuchte Wort." },
+            { id: 6, title: "Symbole-Zählen", cat: "Fokus & Tempo", catKey: "speed", icon: "🔍", desc: "Zähle das gesuchte Symbol." },
+            { id: 7, title: "Räumliches Drehen", cat: "Logik", catKey: "logic", icon: "📐", desc: "Erkenne das gedrehte Objekt." },
+            { id: 8, title: "Reaktions-Check", cat: "Fokus & Tempo", catKey: "speed", icon: "⏱️", desc: "Reagiere im richtigen Moment." },
+            { id: 9, title: "Wort-Assoziation", cat: "Sprache", catKey: "language", icon: "🔤", desc: "Welcher Begriff passt am besten?" },
+            { id: 10, title: "Memory-Grid", cat: "Gedächtnis", catKey: "memory", icon: "🃏", desc: "Merke dir die Positionen." },
+            { id: 11, title: "Größen-Vergleich", cat: "Logik", catKey: "logic", icon: "⚖️", desc: "Bestimme den größten Wert." },
+            { id: 12, title: "Silben-Rätsel", cat: "Sprache", catKey: "language", icon: "📝", desc: "Setze die Silben richtig zusammen." },
+            { id: 13, title: "Muster-Erinnern", cat: "Gedächtnis", catKey: "memory", icon: "💡", desc: "Wiederhole das gezeigte Muster." },
+            { id: 14, title: "Reihenfolge-Sortierung", cat: "Logik", catKey: "logic", icon: "🔢", desc: "Sortiere nach Größe." },
+            { id: 15, title: "Zahlen-Suche", cat: "Fokus & Tempo", catKey: "speed", icon: "🎯", desc: "Finde die gesuchte Zahl." },
+            { id: 16, title: "Synonym-Finder", cat: "Sprache", catKey: "language", icon: "📖", desc: "Finde die gleiche Bedeutung." },
+            { id: 17, title: "Pfad-Logik", cat: "Logik", catKey: "logic", icon: "🗺️", desc: "Finde den richtigen Weg." },
+            { id: 18, title: "Positions-Gedächtnis", cat: "Gedächtnis", catKey: "memory", icon: "📍", desc: "Wo war das Symbol?" },
+            { id: 19, title: "Spiegelbild-Check", cat: "Logik", catKey: "logic", icon: "🪞", desc: "Welches Bild ist gespiegelt?" },
+            { id: 20, title: "Doppel-Aufgabe", cat: "Fokus & Tempo", catKey: "speed", icon: "🤹", desc: "Multitasking unter Zeitdruck." },
+            { id: 21, title: "Oberbegriff-Suche", cat: "Sprache", catKey: "language", icon: "🏷️", desc: "Ordne den passenden Begriff zu." },
+            { id: 22, title: "Formen-Zählen", cat: "Fokus & Tempo", catKey: "speed", icon: "🔷", desc: "Zähle die Ecken und Kanten." },
+            { id: 23, title: "Sequenz-Gedächtnis", cat: "Gedächtnis", catKey: "memory", icon: "🎵", desc: "Merke dir die Ton-Sequenz." },
+            { id: 24, title: "Logik-Gleichung", cat: "Logik", catKey: "logic", icon: "➕", desc: "Löse das Symbol-Rätsel." },
+            { id: 25, title: "Wort-Gegenteil", cat: "Sprache", catKey: "language", icon: "🔄", desc: "Finde das Antonym." },
+            { id: 26, title: "Schatten-Zuordnung", cat: "Logik", catKey: "logic", icon: "👤", desc: "Welcher Schatten gehört dazu?" },
+            { id: 27, title: "Blitz-Merken", cat: "Gedächtnis", catKey: "memory", icon: "⚡", desc: "Kurzzeitgedächtnis-Test." },
+            { id: 28, title: "Konzentrations-Filter", cat: "Fokus & Tempo", catKey: "speed", icon: "🛡️", desc: "Ignoriere die Ablenkung." },
+            { id: 29, title: "Buchstaben-Salat", cat: "Sprache", catKey: "language", icon: "🔀", desc: "Sortiere die Buchstaben." },
+            { id: 30, title: "Meister-Matrizen", cat: "Logik", catKey: "logic", icon: "👑", desc: "Das ultimative Logik-Rätsel." }
+        ];
+
+        // -------------------------------------------------------------
+        // APPLICATION CONTROLLER OBJECT
+        // -------------------------------------------------------------
+        const app = {
+            state: {
+                xp: 0,
+                streak: 1,
+                completedStations: {},
+                skills: { memory: 20, speed: 20, logic: 20, language: 20 },
+                habits: { water: false, walk: false, reading: false, sleep: false, detox: false },
+                currentStation: null,
+                score: 0,
+                mode: 'normal', // 'normal', 'marathon', 'speed'
+                marathonStationIndex: 0,
+                marathonStations: [],
+                timer: null,
+                timeLeft: 0,
+                theme: 'default',
+                currentFactIndex: 0,
+                currentPollIndex: 0,
+                currentStoryIndex: 0,
+                currentRiddleIndex: 0
+            },
+
+            riddles: [
+                {
+                    title: "Das Alter-Rätsel",
+                    category: "Logik & Mathematik",
+                    question: "Ein Vater ist heute viermal so alt wie sein Sohn. In 20 Jahren wird er doppelt so alt sein wie sein Sohn. Wie alt sind die beiden heute?",
+                    solution: "Der Sohn ist heute 10 Jahre alt und der Vater 40 Jahre alt. (In 20 Jahren ist der Sohn 30 und der Vater 60)."
+                },
+                {
+                    title: "Die drei Lampen",
+                    category: "Kombinatorik",
+                    question: "Du stehst vor einem geschlossenen Raum mit drei Lichtschaltern draußen. Im Raum drinnen sind drei Glühbirnen, die von den Schaltern bedient werden. Du darfst den Raum nur einmal betreten. Wie findest du heraus, welcher Schalter zu welcher Birne gehört?",
+                    solution: "Schalte Schalter 1 an und warte ein paar Minuten. Schalte ihn dann aus und schalte Schalter 2 an. Gehe hinein: Die brennende Birne gehört zu Schalter 2. Die warme, aber ausgeschaltete Birne gehört zu Schalter 1. Die kalte Birne gehört zu Schalter 3."
+                },
+                {
+                    title: "Das Seerosen-Paradoxon",
+                    category: "Wachstums-Logik",
+                    question: "Auf einem Teich wächst ein Seerosenblatt. Jeden Tag verdoppelt sich seine Fläche. Nach 30 Tagen ist der gesamte Teich bedeckt. Nach wie vielen Tagen war erst die Hälfte des Teiches bedeckt?",
+                    solution: "Nach 29 Tagen! Da sich die Fläche jeden Tag verdoppelt, war am Tag vor der vollständigen Bedeckung (Tag 30) exakt die Hälfte bedeckt."
+                },
+                {
+                    title: "Das Brücken-Rätsel",
+                    category: "Denksport",
+                    question: "Ein Hirte muss einen Wolf, eine Ziege und einen Kohlkopf über einen Fluss transportieren. Im Boot ist neben ihm nur Platz für genau einen der drei Passagiere. Wenn der Wolf unbeaufsichtigt bei der Ziege bleibt, frisst er sie. Wenn die Ziege unbeaufsichtigt beim Kohl bleibt, frisst sie ihn. Wie kommen alle unbeschadet herüber?",
+                    solution: "1. Nimm zuerst die Ziege rüber und fahre zurück. 2. Nimm den Wolf rüber, lade ihn aus und nimm die Ziege wieder mit zurück. 3. Setze die Ziege ab und nimm den Kohl rüber. 4. Fahre noch einmal allein zurück und hole die Ziege ab."
+                },
+                {
+                    title: "Die Münz-Waage",
+                    category: "Logik",
+                    question: "Du hast 9 scheinbar identische Münzen, aber eine davon ist etwas leichter als die anderen. Du hast eine Balkenwaage und darfst sie nur zweimal benutzen. Wie findest du die leichte Münze?",
+                    solution: "Teile die 9 Münzen in 3er-Gruppen (A, B, C). Wiege Gruppe A gegen B. Sind sie gleich schwer, ist die leichte Münze in Gruppe C. Andernfalls in der leichteren Gruppe. Nimm diese 3 Münzen und wiege zwei davon – bei Gleichstand ist es die dritte."
+                }
+            ],
+
+            stories: [
+                {
+                    id: 'story-1',
+                    title: "Die volle Teetasse",
+                    text: "Ein Gelehrter besuchte einen Zen-Meister, um nach Weisheit zu suchen. Der Meister schenkte Tee ein. Als die Tasse voll war, goss er einfach weiter. Der Gelehrte rief: 'Halt! Die Tasse ist voll!' Der Meister lächelte: 'Wie diese Tasse ist dein Geist voller eigener Meinungen. Lass zuerst los, was du weißt, um Neues aufzunehmen.'"
+                },
+                {
+                    id: 'story-2',
+                    title: "Die zwei Wölfe",
+                    text: "Ein alter Großvater erzählte seinem Enkel: 'In mir kämpfen zwei Wölfe. Einer ist voller Wut, Sorgen und Neid. Der andere voller Liebe, Ruhe und Zuversicht.' Der Enkel fragte: 'Welcher Wolf gewinnt?' Der Großvater antwortete leise: 'Derjenige, den du fütterst.'"
+                },
+                {
+                    id: 'story-3',
+                    title: "Der schwere Stein",
+                    text: "Ein Meister trug einen schweren Stein in der Hand. Er fragte seine Schüler: 'Wie schwer ist dieser Stein?' Sie schätzten verschiedene Gewichte. Er lächelte: 'Das eigentliche Gewicht hängt davon ab, wie lange ich ihn halte. Halte ich ihn eine Minute, ist er leicht. Halte ich ihn den ganzen Tag, lähmt er meinen Arm. So ist es mit Sorgen: Leg sie rechtzeitig ab.'"
+                },
+                {
+                    id: 'story-4',
+                    title: "Das entlaufene Pferd",
+                    text: "Ein Bauer verlor sein Pferd. Die Nachbarn sagten: 'Welch Unglück!' Er antwortete: 'Vielleicht.' Am nächsten Tag kehrte das Pferd mit drei Wildpferden zurück. 'Welch Glück!', riefen die Nachbarn. Der Bauer antwortete: 'Vielleicht.' Sei achtsam mit Urteilen – die Dinge sind im ständigen Fluss."
+                },
+                {
+                    id: 'story-5',
+                    title: "Der Fluss und die Welle",
+                    text: "Eine kleine Welle befürchtete, am Ufer zu zerschellen. Eine größere Welle sah ihre Angst und sagte: 'Du musst keine Angst haben. Du bist nicht nur eine einzelne Welle – du bist Teil des gesamten Ozeans.' Wenn wir erkennen, dass wir mit allem verbunden sind, schwindet die Furcht vor Veränderung."
+                },
+                {
+                    id: 'story-6',
+                    title: "Der Frieden des Königs",
+                    text: "Ein König suchte ein Bild, das perfekten Frieden darstellte. Viele malten ruhige Seen. Der Gewinner aber malte einen tosenden Wasserfall – und auf einem dünnen Zweig daneben saß ein kleiner Vogel, der friedlich sang. Wahrer Frieden bedeutet nicht, wo kein Lärm ist, sondern ruhig im Herzen zu bleiben."
+                },
+                {
+                    id: 'story-7',
+                    title: "Der Bogen ohne Spannung",
+                    text: "Ein Bogenschütze spannte seinen Bogen Tag und Nacht. Ein meisterhafter Lehrer sah dies und löste die Sehne. Er sagte: 'Wenn du den Bogen stets gespannt hältst, bricht er im Moment des Schusses. Gib deinem Geist Pausen, damit er seine Kraft behält, wenn du sie brauchst.'"
+                },
+                {
+                    id: 'story-8',
+                    title: "Das Licht der Kerze",
+                    text: "Tausende Kerzen können an einer einzigen Kerze entzündet werden, ohne dass deren Leben verkürzt wird. Achtsamkeit, Freundlichkeit und Mitgefühl werden niemals weniger, wenn man sie mit anderen teilt."
+                }
+            ],
+            
+            readStories: {},
+
+            facts: [
+                "Schon 5 Minuten tägliches Gehirntraining schärfen deine neuronale Vernetzung spürbar – Konsistenz schlägt Intensität!",
+                "Neuroplastizität bedeutet, dass dein Gehirn in jedem Alter neue Verbindungen knüpfen und wachsen kann.",
+                "Ausreichend Schlaf verfestigt die tagsüber gelernten Informationen im Langzeitgedächtnis.",
+                "Regelmäßige Atemübungen senken den Cortisolspiegel und verbessern die Konzentrationsfähigkeit."
+            ],
+
+            polls: [
+                { q: "Wann trainierst du am liebsten?", options: ["Morgens 🌅", "Nachmittags ☀️", "Abends 🌙"] },
+                { q: "Welcher Bereich fällt dir am leichtesten?", options: ["Logik 🧩", "Gedächtnis 🧠", "Fokus ⚡", "Sprache 💬"] }
+            ],
+
+            init() {
+                this.loadData();
+                this.renderDashboard();
+                this.updateUserUI();
+            },
+
+            loadData() {
+                const saved = localStorage.getItem('brain_expedition_save');
+                if (saved) {
+                    try {
+                        const parsed = JSON.parse(saved);
+                        this.state.xp = parsed.xp || 0;
+                        this.state.streak = parsed.streak || 1;
+                        this.state.completedStations = parsed.completedStations || {};
+                        this.state.skills = parsed.skills || { memory: 20, speed: 20, logic: 20, language: 20 };
+                        this.state.habits = parsed.habits || { water: false, walk: false, reading: false, sleep: false, detox: false };
+                        this.readStories = parsed.readStories || {};
+                    } catch(e){}
+                }
+            },
+
+            saveData() {
+                localStorage.setItem('brain_expedition_save', JSON.stringify({
+                    xp: this.state.xp,
+                    streak: this.state.streak,
+                    completedStations: this.state.completedStations,
+                    skills: this.state.skills,
+                    habits: this.state.habits,
+                    readStories: this.readStories
+                }));
+            },
+
+            updateUserUI() {
+                document.getElementById('user-xp').innerText = `${this.state.xp} XP`;
+                const rankBadge = document.getElementById('rank-badge');
+                if (this.state.xp < 100) rankBadge.innerText = 'Novize';
+                else if (this.state.xp < 300) rankBadge.innerText = 'Entdecker';
+                else if (this.state.xp < 700) rankBadge.innerText = 'Strategen-Geiste';
+                else rankBadge.innerText = 'Neuro-Meister';
+
+                document.getElementById('streak-count-badge').innerText = `${this.state.streak} Tage`;
+            },
+
+            renderDashboard() {
+                this.renderStreakGrid();
+                this.renderStationsGrid();
+                this.renderBrainFact();
+                this.renderCommunityPoll();
+            },
+
+            renderStreakGrid() {
+                const grid = document.getElementById('streak-week-grid');
+                if (!grid) return;
+                const days = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+                grid.innerHTML = days.map((day, idx) => `
+                    <div class="flex flex-col items-center">
+                        <span class="text-[9px] text-slate-500 mb-1">${day}</span>
+                        <div class="w-6 h-6 rounded-md ${idx < (this.state.streak % 8) ? 'bg-amber-500/30 text-amber-300 border border-amber-500/40' : 'bg-slate-800 text-slate-600'} flex items-center justify-center text-[10px] font-bold">
+                            ${idx < (this.state.streak % 8) ? '✓' : ''}
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            renderBrainFact() {
+                const el = document.getElementById('dash-fact-text');
+                if (el) el.innerText = `„${this.facts[this.state.currentFactIndex]}“`;
+            },
+
+            nextBrainFact() {
+                this.state.currentFactIndex = (this.state.currentFactIndex + 1) % this.facts.length;
+                this.renderBrainFact();
+            },
+
+            renderCommunityPoll() {
+                const container = document.getElementById('dash-poll-container');
+                if (!container) return;
+                const poll = this.polls[this.state.currentPollIndex];
+                container.innerHTML = `
+                    <p class="text-xs font-bold text-slate-200 mb-2">${poll.q}</p>
+                    <div class="grid grid-cols-1 gap-1">
+                        ${poll.options.map(opt => `
+                            <button onclick="app.playSound('click'); app.votePoll()" class="py-1 px-2 rounded bg-slate-800/80 hover:bg-slate-700 text-[11px] text-slate-300 text-left transition">
+                                ${opt}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+            },
+
+            nextCommunityPoll() {
+                this.state.currentPollIndex = (this.state.currentPollIndex + 1) % this.polls.length;
+                this.renderCommunityPoll();
+            },
+
+            votePoll() {
+                this.addXP(5);
+                alert("Danke für deine Abstimmung! (+5 XP)");
+            },
+
+            renderStationsGrid() {
+                const grid = document.getElementById('stations-grid');
+                if (!grid) return;
+                grid.innerHTML = STATIONS.map(st => `
+                    <div onclick="app.playSound('click'); app.startStation(${st.id})" class="glass-card rounded-xl p-3.5 cursor-pointer flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-2xl">${st.icon}</span>
+                            <div>
+                                <h4 class="text-xs font-bold text-white">${st.id}. ${st.title}</h4>
+                                <span class="text-[10px] text-indigo-400 font-semibold">${st.cat}</span>
+                            </div>
+                        </div>
+                        <div class="w-6 h-6 rounded-full bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-[10px] font-bold text-indigo-300">
+                            ▶
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            showDashboard() {
+                document.getElementById('view-dashboard').classList.remove('hidden');
+                document.getElementById('view-game').classList.add('hidden');
+                if (this.state.timer) clearInterval(this.state.timer);
+            },
+
+            startStation(stationId) {
+                const st = STATIONS.find(s => s.id === stationId);
+                if (!st) return;
+                this.state.currentStation = st;
+                this.state.mode = 'normal';
+                this.state.score = 0;
+                
+                document.getElementById('view-dashboard').classList.add('hidden');
+                document.getElementById('view-game').classList.remove('hidden');
+                document.getElementById('game-title').innerText = `${st.id}. ${st.title}`;
+                document.getElementById('game-category').innerText = st.cat;
+                document.getElementById('game-score-display').innerText = `0 Pkt`;
+
+                this.renderGameStage();
+            },
+
+            startMarathon() {
+                this.state.mode = 'marathon';
+                this.state.marathonStationIndex = 0;
+                this.state.score = 0;
+                this.state.marathonStations = [...STATIONS].sort(() => 0.5 - Math.random()).slice(0, 5);
+                this.startStation(this.state.marathonStations[0].id);
+            },
+
+            startSpeedSprint() {
+                this.state.mode = 'speed';
+                this.state.score = 0;
+                const randomStation = STATIONS[Math.floor(Math.random() * STATIONS.length)];
+                this.startStation(randomStation.id);
+            },
+
+            renderGameStage() {
+                const stage = document.getElementById('game-stage');
+                if (!stage) return;
+                
+                const num1 = Math.floor(Math.random() * 12) + 2;
+                const num2 = Math.floor(Math.random() * 12) + 2;
+                const correct = num1 + num2;
+                const wrong1 = correct + Math.floor(Math.random() * 4) + 1;
+                const wrong2 = Math.max(1, correct - Math.floor(Math.random() * 4) - 1);
+                
+                const answers = [correct, wrong1, wrong2].sort(() => 0.5 - Math.random());
+
+                stage.innerHTML = `
+                    <div class="text-center space-y-4">
+                        <div class="text-3xl font-black text-white">${num1} + ${num2} = ?</div>
+                        <div class="grid grid-cols-3 gap-3">
+                            ${answers.map(ans => `
+                                <button onclick="app.submitAnswer(${ans === correct})" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-indigo-600 font-bold text-lg text-white transition">
+                                    ${ans}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            },
+
+            submitAnswer(isCorrect) {
+                if (isCorrect) {
+                    sound.correct();
+                    this.state.score += 10;
+                    this.addXP(10);
+                    if (this.state.currentStation) {
+                        this.state.skills[this.state.currentStation.catKey] = Math.min(100, (this.state.skills[this.state.currentStation.catKey] || 0) + 2);
+                    }
+                } else {
+                    sound.wrong();
+                }
+
+                document.getElementById('game-score-display').innerText = `${this.state.score} Pkt`;
+
+                if (this.state.mode === 'marathon') {
+                    this.state.marathonStationIndex++;
+                    if (this.state.marathonStationIndex < this.state.marathonStations.length) {
+                        this.startStation(this.state.marathonStations[this.state.marathonStationIndex].id);
+                        return;
+                    } else {
+                        sound.fanfare();
+                        alert(`Marathon abgeschlossen! Gesamt-Punktzahl: ${this.state.score}`);
+                        this.showDashboard();
+                        return;
+                    }
+                }
+
+                this.renderGameStage();
+            },
+
+            addXP(amount) {
+                this.state.xp += amount;
+                this.saveData();
+                this.updateUserUI();
+            },
+
+            toggleSound() {
+                sound.enabled = !sound.enabled;
+                document.getElementById('sound-btn').innerText = sound.enabled ? '🔊' : '🔇';
+            },
+
+            playSound(type) {
+                if (!sound.enabled) return;
+                if (typeof sound[type] === 'function') {
+                    sound[type]();
+                } else {
+                    sound.click();
+                }
+            },
+
+            toggleTheme() {
+                const themes = ['default', 'theme-emerald', 'theme-solar'];
+                const body = document.body;
+                let currentIdx = 0;
+                themes.forEach((t, i) => {
+                    if (t !== 'default' && body.classList.contains(t)) {
+                        currentIdx = i;
+                        body.classList.remove(t);
+                    }
+                });
+                const nextTheme = themes[(currentIdx + 1) % themes.length];
+                if (nextTheme !== 'default') {
+                    body.classList.add(nextTheme);
+                }
+                this.state.theme = nextTheme;
+            },
+
+            // --- MINDFULNESS MODAL LOGIC ---
+            showMindfulnessModal() {
+                document.getElementById('modal-mindfulness').classList.remove('hidden');
+                document.getElementById('modal-mindfulness').classList.add('flex');
+                this.renderZenStoryList();
+            },
+
+            <!-- --- RIDDLES MODAL LOGIC --- -->
+            showRiddlesModal() {
+                document.getElementById('modal-riddles').classList.remove('hidden');
+                document.getElementById('modal-riddles').classList.add('flex');
+                this.renderRiddle(0);
+                this.renderRiddleArchive();
+            },
+
+            showRoutinesModal() {
+                document.getElementById('modal-routines').classList.remove('hidden');
+                document.getElementById('modal-routines').classList.add('flex');
+                this.updateHabitsUI();
+            },
+
+            toggleHabit(habitKey) {
+                if (!this.state.habits) this.state.habits = {};
+                this.state.habits[habitKey] = !this.state.habits[habitKey];
+
+                if (this.state.habits[habitKey]) {
+                    this.addXP(10);
+                    sound.correct();
+                } else {
+                    this.state.xp = Math.max(0, this.state.xp - 10);
+                    sound.tick();
+                }
+
+                this.saveData();
+                this.updateHabitsUI();
+                this.updateUserUI();
+            },
+
+            updateHabitsUI() {
+                const habits = this.state.habits || {};
+                const keys = ['water', 'walk', 'reading', 'sleep', 'detox'];
+                let doneCount = 0;
+
+                keys.forEach(k => {
+                    const chk = document.getElementById(`habit-${k}`);
+                    if (chk) {
+                        chk.checked = !!habits[k];
+                    }
+                    if (habits[k]) doneCount++;
+                });
+
+                const pct = (doneCount / keys.length) * 100;
+                const bar = document.getElementById('routines-progress-bar');
+                const txt = document.getElementById('routines-progress-text');
+
+                if (bar) bar.style.width = `${pct}%`;
+                if (txt) txt.innerText = `${doneCount} / ${keys.length} gemeistert`;
+            },
+
+            renderRiddle(idx) {
+                this.state.currentRiddleIndex = idx;
+                const r = this.riddles[idx];
+                if (!r) return;
+                document.getElementById('riddle-badge').innerText = r.category;
+                document.getElementById('riddle-title').innerText = r.title;
+                document.getElementById('riddle-question').innerText = r.question;
+                document.getElementById('riddle-solution-text').innerText = r.solution;
+                
+                const box = document.getElementById('riddle-solution-box');
+                const btn = document.getElementById('riddle-toggle-btn');
+                box.classList.add('hidden');
+                btn.innerText = '💡 Lösung anzeigen';
+            },
+
+            toggleRiddleSolution() {
+                const box = document.getElementById('riddle-solution-box');
+                const btn = document.getElementById('riddle-toggle-btn');
+                if (box.classList.contains('hidden')) {
+                    box.classList.remove('hidden');
+                    btn.innerText = '🔒 Lösung verbergen';
+                    this.addXP(10);
+                    sound.correct();
+                } else {
+                    box.classList.add('hidden');
+                    btn.innerText = '💡 Lösung anzeigen';
+                }
+            },
+
+            renderRiddleArchive() {
+                const list = document.getElementById('riddle-archive-list');
+                if (!list) return;
+                list.innerHTML = this.riddles.map((r, idx) => `
+                    <div onclick="app.playSound('click'); app.renderRiddle(${idx})" class="p-2.5 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-800 cursor-pointer flex items-center justify-between transition group">
+                        <span class="text-xs text-slate-300 group-hover:text-amber-300 transition">${idx + 1}. ${r.title}</span>
+                        <span class="text-[10px] text-amber-400 opacity-0 group-hover:opacity-100 transition">Öffnen ➔</span>
+                    </div>
+                `).join('');
+            },
+
+            setMindfulnessTab(tab) {
+                ['breath', 'eye', 'scan', 'sound', 'story'].forEach(t => {
+                    const pane = document.getElementById(`mindpane-${t}`);
+                    if (pane) pane.classList.add('hidden');
+                    const tabBtn = document.getElementById(`mindtab-${t}`);
+                    if (tabBtn) {
+                        tabBtn.classList.remove('bg-emerald-600', 'text-white');
+                        tabBtn.classList.add('text-slate-400');
+                    }
+                });
+
+                const targetPane = document.getElementById(`mindpane-${tab}`);
+                if (targetPane) targetPane.classList.remove('hidden');
+                const activeTabBtn = document.getElementById(`mindtab-${tab}`);
+                if (activeTabBtn) {
+                    activeTabBtn.classList.add('bg-emerald-600', 'text-white');
+                    activeTabBtn.classList.remove('text-slate-400');
+                }
+
+                if (tab === 'story') {
+                    this.showZenStoryList();
+                }
+            },
+
+            startBodyScan() {
+                const phases = [
+                    { emoji: '🤯', title: '1. Stirn & Kiefer', hint: 'Entspanne die Augenbrauen und lass den Unterkiefer locker hängen.' },
+                    { emoji: '🧘‍♂️', title: '2. Nacken & Schultern', hint: 'Lass die Schultern sanft nach unten sinken. Atme tief durch.' },
+                    { emoji: '✋', title: '3. Hände & Arme', hint: 'Öffne die Handflächen und spüre das leichte Kribbeln in den Fingerspitzen.' },
+                    { emoji: '✨', title: 'Fertig!', hint: 'Dein Körper ist vollkommen entspannt und bereit fürs Workout.' }
+                ];
+
+                let idx = 0;
+                const updateView = () => {
+                    const phase = phases[idx];
+                    document.getElementById('bodyscan-emoji').innerText = phase.emoji;
+                    document.getElementById('bodyscan-phase').innerText = phase.title;
+                    document.getElementById('bodyscan-hint').innerText = phase.hint;
+                    sound.tick();
+
+                    idx++;
+                    if (idx < phases.length) {
+                        setTimeout(updateView, 4000);
+                    } else {
+                        this.addXP(20);
+                        sound.correct();
+                    }
+                };
+                updateView();
+            },
+
+            toggleAmbientRain() {
+                const isPlaying = sound.toggleRain();
+                const btn = document.getElementById('ambient-rain-btn');
+                if (isPlaying) {
+                    btn.classList.add('bg-cyan-600', 'text-white');
+                    btn.innerText = '🌧️ Regen stoppen';
+                } else {
+                    btn.classList.remove('bg-cyan-600', 'text-white');
+                    btn.innerText = '🌧️ Sanfter Regen';
+                }
+            },
+
+            saveGratitudeNote() {
+                const input = document.getElementById('gratitude-input');
+                if (input && input.value.trim() !== '') {
+                    this.addXP(20);
+                    sound.correct();
+                    alert(`Gedanke gespeichert: "${input.value.trim()}" (+20 XP)`);
+                    input.value = '';
+                }
+            },
+
+            toggleBreathingCycle() {
+                const circle = document.getElementById('breath-circle');
+                const text = document.getElementById('breath-instruction');
+                const timer = document.getElementById('breath-timer');
+                const btn = document.getElementById('breath-start-btn');
+                
+                if (circle.classList.contains('scale-150')) {
+                    circle.classList.remove('scale-150');
+                    text.innerText = 'Bereit?';
+                    timer.innerText = '4-7-8 Methode';
+                    btn.innerText = '▶️ Atem-Training starten';
+                } else {
+                    circle.classList.add('scale-150');
+                    text.innerText = 'Einatmen...';
+                    timer.innerText = '4 Sekunden';
+                    sound.breathIn();
+                    btn.innerText = '⏹️ Stoppen';
+                    this.addXP(15);
+                }
+            },
+
+            startEyeExercise() {
+                const target = document.getElementById('eye-target');
+                if (!target) return;
+                let pos = 0;
+                const moves = ['translate-x-12', '-translate-x-12', 'translate-y-8', '-translate-y-8'];
+                moves.forEach((m, idx) => {
+                    setTimeout(() => {
+                        target.className = `w-8 h-8 rounded-full bg-cyan-400 shadow-[0_0_20px_#22d3ee] transition-all duration-700 flex items-center justify-center text-[10px] transform ${m}`;
+                    }, idx * 1000);
+                });
+                setTimeout(() => {
+                    target.className = `w-8 h-8 rounded-full bg-cyan-400 shadow-[0_0_20px_#22d3ee] transition-all duration-700 flex items-center justify-center text-[10px]`;
+                    this.addXP(15);
+                    sound.correct();
+                }, 4500);
+            },
+
+            playZenChime() {
+                sound.breathIn();
+                document.getElementById('zen-status-text').innerText = '✨ Harmonische Resonanz schwingt...';
+                setTimeout(() => {
+                    document.getElementById('zen-status-text').innerText = 'Tippe unten für den Meditations-Klang';
+                }, 4000);
+                this.addXP(10);
+            },
+
+            renderZenStoryList() {
+                const container = document.getElementById('zen-story-titles-container');
+                if (!container) return;
+                container.innerHTML = this.stories.map((story, idx) => {
+                    const isRead = !!this.readStories[story.id || idx];
+                    return `
+                        <div onclick="app.openZenStory(${idx})" class="p-3 rounded-xl bg-slate-900/80 hover:bg-slate-800 border ${isRead ? 'border-emerald-500/40 bg-emerald-950/20' : 'border-slate-800/80 hover:border-amber-500/40'} cursor-pointer flex items-center justify-between transition group">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs">📖</span>
+                                <span class="text-xs font-bold ${isRead ? 'text-emerald-300' : 'text-slate-200 group-hover:text-amber-300'} transition">${story.title}</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                ${isRead ? '<span class="text-xs font-black text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">✓ Gelesen</span>' : '<span class="text-xs text-amber-400 opacity-0 group-hover:opacity-100 transition">Lesen ➔</span>'}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            showZenStoryList() {
+                this.playSound('click');
+                document.getElementById('zen-story-list-view').classList.remove('hidden');
+                document.getElementById('zen-story-detail-view').classList.add('hidden');
+                this.renderZenStoryList();
+            },
+
+            openZenStory(idx) {
+                this.playSound('click');
+                this.state.currentStoryIndex = idx;
+                const story = this.stories[idx];
+                if (story) {
+                    const isRead = !!this.readStories[story.id || idx];
+                    document.getElementById('zen-story-title').innerText = story.title;
+                    document.getElementById('zen-story-body').innerText = story.text;
+                    
+                    const btn = document.querySelector('#zen-story-detail-view button[onclick="app.readZenStoryReward()"]');
+                    if (btn) {
+                        if (isRead) {
+                            btn.innerHTML = `✓ Bereits gelesen (+15 XP erhalten)`;
+                            btn.className = "w-full py-2.5 rounded-xl bg-emerald-950/40 text-emerald-400 font-bold text-xs border border-emerald-500/30 transition cursor-default";
+                        } else {
+                            btn.innerHTML = `📖 Gelesen & Reflektiert (+15 XP)`;
+                            btn.className = "w-full py-2.5 rounded-xl bg-amber-600/30 hover:bg-amber-600/50 text-amber-300 font-bold text-xs border border-amber-500/30 transition";
+                        }
+                    }
+
+                    document.getElementById('zen-story-list-view').classList.add('hidden');
+                    document.getElementById('zen-story-detail-view').classList.remove('hidden');
+                }
+            },
+
+            readZenStoryReward() {
+                const story = this.stories[this.state.currentStoryIndex];
+                const storyKey = story ? (story.id || this.state.currentStoryIndex) : this.state.currentStoryIndex;
+
+                if (!this.readStories[storyKey]) {
+                    this.readStories[storyKey] = true;
+                    this.addXP(15);
+                    sound.correct();
+                    this.saveData();
+                    alert("Erkenntnis verinnerlicht! (+15 XP)");
+                }
+                this.openZenStory(this.state.currentStoryIndex);
+            },
+
+            // --- PROFILES & RADAR CHART LOGIC ---
+            showStatsModal() {
+                document.getElementById('modal-profile').classList.remove('hidden');
+                document.getElementById('modal-profile').classList.add('flex');
+                this.renderRadarChart();
+            },
+
+            renderRadarChart() {
+                const canvas = document.getElementById('radarChartCanvas');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                const width = canvas.width;
+                const height = canvas.height;
+                const centerX = width / 2;
+                const centerY = height / 2;
+                const radius = 70;
+
+                ctx.clearRect(0, 0, width, height);
+
+                // Values
+                const skills = [
+                    this.state.skills.memory || 20,
+                    this.state.skills.speed || 20,
+                    this.state.skills.logic || 20,
+                    this.state.skills.language || 20
+                ];
+                const labels = ['Gedächtnis', 'Fokus/Speed', 'Logik', 'Sprache'];
+
+                document.getElementById('skill-val-mem').innerText = `${skills[0]}%`;
+                document.getElementById('skill-val-speed').innerText = `${skills[1]}%`;
+                document.getElementById('skill-val-logic').innerText = `${skills[2]}%`;
+                document.getElementById('skill-val-lang').innerText = `${skills[3]}%`;
+
+                // Draw Web Grid
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+                ctx.lineWidth = 1;
+                for (let r = 1; r <= 3; r++) {
+                    ctx.beginPath();
+                    for (let i = 0; i < 4; i++) {
+                        const angle = (Math.PI / 2) * i - Math.PI / 2;
+                        const curR = (radius / 3) * r;
+                        const x = centerX + curR * Math.cos(angle);
+                        const y = centerY + curR * Math.sin(angle);
+                        if (i === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.closePath();
+                    ctx.stroke();
+                }
+
+                // Draw Axes & Labels
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '10px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                for (let i = 0; i < 4; i++) {
+                    const angle = (Math.PI / 2) * i - Math.PI / 2;
+                    const x = centerX + radius * Math.cos(angle);
+                    const y = centerY + radius * Math.sin(angle);
+
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY);
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+
+                    const lx = centerX + (radius + 20) * Math.cos(angle);
+                    const ly = centerY + (radius + 14) * Math.sin(angle);
+                    ctx.fillText(labels[i], lx, ly);
+                }
+
+                // Draw Skill Area
+                ctx.beginPath();
+                for (let i = 0; i < 4; i++) {
+                    const angle = (Math.PI / 2) * i - Math.PI / 2;
+                    const valR = (radius * Math.min(100, Math.max(10, skills[i]))) / 100;
+                    const x = centerX + valR * Math.cos(angle);
+                    const y = centerY + valR * Math.sin(angle);
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(99, 102, 241, 0.4)';
+                ctx.fill();
+                ctx.strokeStyle = '#818cf8';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            },
+
+            showRoutinesModal() {
+                document.getElementById('modal-routines').classList.remove('hidden');
+                document.getElementById('modal-routines').classList.add('flex');
+                this.updateHabitsUI();
+            },
+
+            toggleHabit(habitKey) {
+                if (!this.state.habits) this.state.habits = {};
+                this.state.habits[habitKey] = !this.state.habits[habitKey];
+
+                if (this.state.habits[habitKey]) {
+                    this.addXP(10);
+                    sound.correct();
+                } else {
+                    this.state.xp = Math.max(0, this.state.xp - 10);
+                    sound.tick();
+                }
+
+                this.saveData();
+                this.updateHabitsUI();
+                this.updateUserUI();
+            },
+
+            updateHabitsUI() {
+                const habits = this.state.habits || {};
+                const keys = ['water', 'walk', 'reading', 'sleep', 'detox'];
+                let doneCount = 0;
+
+                keys.forEach(k => {
+                    const chk = document.getElementById(`habit-${k}`);
+                    if (chk) {
+                        chk.checked = !!habits[k];
+                    }
+                    if (habits[k]) doneCount++;
+                });
+
+                const pct = (doneCount / keys.length) * 100;
+                const bar = document.getElementById('routines-progress-bar');
+                const txt = document.getElementById('routines-progress-text');
+
+                if (bar) bar.style.width = `${pct}%`;
+                if (txt) txt.innerText = `${doneCount} / ${keys.length} gemeistert`;
+            },
+
+            // --- MULTIPLAYER & DUELL LOGIC ---
+            duelState: {
+                type: null,
+                userScore: 0,
+                botScore: 0,
+                targetScore: 5,
+                botTimer: null,
+                mathCurrent: null,
+                numbersCurrent: [],
+                numbersExpected: 1
+            },
+
+            showDuelModal() {
+                document.getElementById('modal-duel').classList.remove('hidden');
+                document.getElementById('modal-duel').classList.add('flex');
+                document.getElementById('duel-menu-view').classList.remove('hidden');
+                document.getElementById('duel-arena-view').classList.add('hidden');
+                if (this.duelState.botTimer) clearInterval(this.duelState.botTimer);
+                if (window.onlineDuelManager) window.onlineDuelManager.stopListen();
+            },
+
+            setDuelOpponentMode(mode) {
+                if (window.onlineDuelManager) {
+                    window.onlineDuelManager.opponentMode = mode;
+                }
+                const btnOnline = document.getElementById('duel-mode-online-btn');
+                const btnBot = document.getElementById('duel-mode-bot-btn');
+                const labelOpp = document.getElementById('duel-opp-label');
+
+                if (mode === 'online') {
+                    btnOnline.className = "py-2 rounded-xl bg-rose-600 text-white font-bold border border-rose-500 transition";
+                    btnBot.className = "py-2 rounded-xl bg-slate-800 text-slate-400 font-bold border border-slate-700 transition";
+                    if (labelOpp) labelOpp.innerText = "🌐 Live Online-Spieler";
+                } else {
+                    btnBot.className = "py-2 rounded-xl bg-rose-600 text-white font-bold border border-rose-500 transition";
+                    btnOnline.className = "py-2 rounded-xl bg-slate-800 text-slate-400 font-bold border border-slate-700 transition";
+                    if (labelOpp) labelOpp.innerText = "🤖 Neuro-Bot (KI)";
+                }
+            },
+
+            startMathDuel() {
+                this.duelState.type = 'math';
+                this.duelState.userScore = 0;
+                this.duelState.botScore = 0;
+                this.updateDuelUI();
+                
+                document.getElementById('duel-menu-view').classList.add('hidden');
+                document.getElementById('duel-arena-view').classList.remove('hidden');
+
+                if (window.onlineDuelManager && window.onlineDuelManager.opponentMode === 'online') {
+                    window.onlineDuelManager.syncDuelProgress(0);
+                    window.onlineDuelManager.listenToRoom((oppScore) => {
+                        this.duelState.botScore = oppScore;
+                        this.updateDuelUI();
+                        if (this.duelState.botScore >= this.duelState.targetScore) {
+                            this.endDuel(false);
+                        }
+                    });
+                } else {
+                    this.startBotAI(2800); // KI löst alle ~2.8s
+                }
+
+                this.renderNextMathProblem();
+            },
+
+            startNumbersDuel() {
+                this.duelState.type = 'numbers';
+                this.duelState.userScore = 0;
+                this.duelState.botScore = 0;
+                this.updateDuelUI();
+
+                document.getElementById('duel-menu-view').classList.add('hidden');
+                document.getElementById('duel-arena-view').classList.remove('hidden');
+
+                if (window.onlineDuelManager && window.onlineDuelManager.opponentMode === 'online') {
+                    window.onlineDuelManager.syncDuelProgress(0);
+                    window.onlineDuelManager.listenToRoom((oppScore) => {
+                        this.duelState.botScore = oppScore;
+                        this.updateDuelUI();
+                        if (this.duelState.botScore >= this.duelState.targetScore) {
+                            this.endDuel(false);
+                        }
+                    });
+                } else {
+                    this.startBotAI(3200); // KI löst alle ~3.2s
+                }
+
+                this.renderNextNumbersProblem();
+            },
+
+            startBotAI(intervalMs) {
+                if (this.duelState.botTimer) clearInterval(this.duelState.botTimer);
+                this.duelState.botTimer = setInterval(() => {
+                    this.duelState.botScore++;
+                    this.updateDuelUI();
+                    sound.tick();
+                    if (this.duelState.botScore >= this.duelState.targetScore) {
+                        this.endDuel(false);
+                    }
+                }, intervalMs);
+            },
+
+            renderNextMathProblem() {
+                const n1 = Math.floor(Math.random() * 15) + 3;
+                const n2 = Math.floor(Math.random() * 15) + 3;
+                const ans = n1 + n2;
+                const wrong1 = ans + Math.floor(Math.random() * 4) + 1;
+                const wrong2 = Math.max(1, ans - Math.floor(Math.random() * 4) - 1);
+                const opts = [ans, wrong1, wrong2].sort(() => 0.5 - Math.random());
+
+                this.duelState.mathAns = ans;
+
+                const stage = document.getElementById('duel-stage');
+                stage.innerHTML = `
+                    <div class="text-2xl font-black text-white mb-2">${n1} + ${n2} = ?</div>
+                    <div class="grid grid-cols-3 gap-2 w-full max-w-xs">
+                        ${opts.map(o => `
+                            <button onclick="app.submitMathDuelAns(${o})" class="py-2.5 rounded-xl bg-slate-800 hover:bg-rose-600 font-bold text-base text-white transition">
+                                ${o}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+            },
+
+            submitMathDuelAns(val) {
+                if (val === this.duelState.mathAns) {
+                    sound.correct();
+                    this.duelState.userScore++;
+                    if (window.onlineDuelManager) window.onlineDuelManager.syncDuelProgress(this.duelState.userScore);
+                    this.updateDuelUI();
+                    if (this.duelState.userScore >= this.duelState.targetScore) {
+                        this.endDuel(true);
+                        return;
+                    }
+                } else {
+                    sound.wrong();
+                }
+                this.renderNextMathProblem();
+            },
+
+            renderNextNumbersProblem() {
+                const nums = [1, 2, 3, 4, 5].sort(() => 0.5 - Math.random());
+                this.duelState.numbersExpected = 1;
+
+                const stage = document.getElementById('duel-stage');
+                stage.innerHTML = `
+                    <p class="text-xs text-slate-300 font-bold">Klicke die Zahlen von 1 bis 5 aufsteigend an!</p>
+                    <div id="numbers-btn-grid" class="flex flex-wrap justify-center gap-2 max-w-xs">
+                        ${nums.map(n => `
+                            <button onclick="app.submitNumberDuelClick(${n}, this)" class="w-12 h-12 rounded-xl bg-slate-800 hover:bg-rose-600 font-black text-lg text-white transition border border-slate-700">
+                                ${n}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+            },
+
+            submitNumberDuelClick(num, btnEl) {
+                if (num === this.duelState.numbersExpected) {
+                    sound.click();
+                    btnEl.disabled = true;
+                    btnEl.className = "w-12 h-12 rounded-xl bg-emerald-600/40 border border-emerald-500 text-emerald-300 font-black text-lg cursor-default opacity-50";
+                    this.duelState.numbersExpected++;
+
+                    if (this.duelState.numbersExpected > 5) {
+                        sound.correct();
+                        this.duelState.userScore++;
+                        if (window.onlineDuelManager) window.onlineDuelManager.syncDuelProgress(this.duelState.userScore);
+                        this.updateDuelUI();
+                        if (this.duelState.userScore >= this.duelState.targetScore) {
+                            this.endDuel(true);
+                            return;
+                        }
+                        this.renderNextNumbersProblem();
+                    }
+                } else {
+                    sound.wrong();
+                    this.renderNextNumbersProblem();
+                }
+            },
+
+            updateDuelUI() {
+                const uPct = (this.duelState.userScore / this.duelState.targetScore) * 100;
+                const bPct = (this.duelState.botScore / this.duelState.targetScore) * 100;
+
+                document.getElementById('duel-user-bar').style.width = `${uPct}%`;
+                document.getElementById('duel-bot-bar').style.width = `${bPct}%`;
+
+                document.getElementById('duel-user-score-text').innerText = `${this.duelState.userScore} / ${this.duelState.targetScore}`;
+                document.getElementById('duel-bot-score-text').innerText = `${this.duelState.botScore} / ${this.duelState.targetScore}`;
+            },
+
+            endDuel(userWon) {
+                if (this.duelState.botTimer) clearInterval(this.duelState.botTimer);
+                if (window.onlineDuelManager) window.onlineDuelManager.stopListen();
+
+                if (userWon) {
+                    sound.fanfare();
+                    this.addXP(35);
+                    alert("🏆 DU HAST GEWONNEN! Du warst schneller als dein Gegner! (+35 XP)");
+                } else {
+                    sound.wrong();
+                    alert("⚡ Dein Gegner war diesmal einen Tick schneller. Versuche es gleich noch einmal!");
+                }
+
+                document.getElementById('duel-menu-view').classList.remove('hidden');
+                document.getElementById('duel-arena-view').classList.add('hidden');
+            },
+
+            closeModals() {
+                if (this.duelState.botTimer) clearInterval(this.duelState.botTimer);
+                if (window.onlineDuelManager) window.onlineDuelManager.stopListen();
+                document.getElementById('modal-mindfulness').classList.add('hidden');
+                document.getElementById('modal-mindfulness').classList.remove('flex');
+                document.getElementById('modal-riddles').classList.add('hidden');
+                document.getElementById('modal-riddles').classList.remove('flex');
+                document.getElementById('modal-routines').classList.add('hidden');
+                document.getElementById('modal-routines').classList.remove('flex');
+                document.getElementById('modal-profile').classList.add('hidden');
+                document.getElementById('modal-profile').classList.remove('flex');
+                document.getElementById('modal-leaderboard').classList.add('hidden');
+                document.getElementById('modal-leaderboard').classList.remove('flex');
+                document.getElementById('modal-duel').classList.add('hidden');
+                document.getElementById('modal-duel').classList.remove('flex');
+            }
+        };
+
+        // Window Load Initializer
+        window.onload = function () {
+            app.init();
+        };
+    </script>
+</body>
+</html>
